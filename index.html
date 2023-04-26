@@ -7,9 +7,70 @@
     <title>智绘画板</title>
     <link rel="shortcut icon" href="./image/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
+    <style>
+		#fileInputWrapper {
+			position: fixed;
+			left: 50%;
+			bottom: 51px;
+			z-index: 999;
+			background-color: #868585;
+			border: 1px solid #090909;
+			padding: 10px;
+		}
+		#fileInputWrapper input[type="file"] {
+			display: none;
+		}
+		.fileItem {
+			display: inline-block;
+			margin-right: 10px;
+			cursor: pointer;
+		}
+		.fileItem img {
+			width: 64px;
+			height: 64px;
+			object-fit: cover;
+			border: 1px solid #ccc;
+			padding: 5px;
+		}
+		#confirmButton {
+			margin-top: 10px;
+			padding: 5px 10px;
+			background-color: #4CAF50;
+			color: #fff;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+	</style>
 </head>
 <body>
+    <canvas id="canvas2"></canvas>
     <canvas id="canvas"></canvas>
+    <div id="fileInputWrapper">
+		<label for="fileInput">选择文件：</label>
+		<input type="file" id="fileInput" multiple>
+		<div>
+			<div class="fileItem">
+				<label for="file1">
+					<img src="https://via.placeholder.com/64x64.png?text=File+1" alt="File 1">
+				</label>
+				<input type="checkbox" id="file1" name="files[]" value="file1.jpg">
+			</div>
+			<div class="fileItem">
+				<label for="file2">
+					<img src="https://via.placeholder.com/64x64.png?text=File+2" alt="File 2">
+				</label>
+				<input type="checkbox" id="file2" name="files[]" value="file2.jpg">
+			</div>
+			<div class="fileItem">
+				<label for="file3">
+					<img src="https://via.placeholder.com/64x64.png?text=File+3" alt="File 3">
+				</label>
+				<input type="checkbox" id="file3" name="files[]" value="file3.jpg">
+			</div>
+		</div>
+		<button id="confirmButton">确认</button>
+	</div>
    <!--  <div class="bg-btn"></div>
     <div class="color-group" id="bgGroup">
         <h3>选择背景颜色:</h3>
@@ -29,18 +90,21 @@
         </ul>
         <i class="closeBtn"></i>
     </div> -->
-    <div class="tools">
+    <div class="tools" id="tools">
         <div class="container">
-            <button class="save"  id="save" title="保存"></button>
-            <button class="brush active" id="brush" title="画笔"></button>
-            <button class="eraser" id="eraser" title="橡皮擦"></button>
-            <button class="clear" id="clear" title="清屏"></button>
+            <!-- <button class="save"  id="save" title="保存"></button> -->
+            <button class="size" id="size" title="size"></button>
+            <button class="brush" id="brush" title="pen"></button>
+            <button class="color" id="color" title="pen color"></button>
+            <button class="geom" id="geom" title="geometry"></button>
+            <!-- <button class="eraser" id="eraser" title="eraser"></button> -->
+            <!-- <button class="clear" id="clear" title="清屏"></button>
             <button class="undo"  id="undo" title="撤销"></button>
-            <button class="redo"  id="redo" title="再做"></button>
+            <button class="redo"  id="redo" title="再做"></button> -->
         </div>
     </div>
     <div class="pen-detail" id="penDetail">
-        <i class="closeBtn"></i>
+        <!-- <i class="closeBtn"></i> -->
         <!-- <p>笔类型</p>
         <ul class="pen-type clearfix">
             <li class="pen"></li>
@@ -48,9 +112,33 @@
             <li class="circle"></li>
             <li class="rect"></li>
         </ul> -->
-        <p>笔大小</p>
+        <p>Pen/Eraser size</p>
         <span class="circle-box"><i id="thickness"></i></span> <input type="range" id="range1" min="1" max="10" value="1">
-        <p>笔颜色</p>
+        <!-- <p>笔颜色</p>
+        <ul class="pen-color clearfix">
+            <li class="color-item active" style="background-color: black;"></li>
+            <li class="color-item" style="background-color: #FF3333;"></li>
+            <li class="color-item" style="background-color: #99CC00;"></li>
+            <li class="color-item" style="background-color: #0066FF;"></li>
+            <li class="color-item" style="background-color: #FFFF33;"></li>
+            <li class="color-item" style="background-color: #33CC66;"></li>
+        </ul> -->
+        <!-- <p>不透明度</p>
+        <i class="showOpacity"></i> <input type="range" id="range2" min="1" max="10" value="1"> -->
+    </div>
+
+    <div class="pen-detail1" id="penDetail1">
+        <!-- <i class="closeBtn"></i> -->
+        <!-- <p>笔类型</p>
+        <ul class="pen-type clearfix">
+            <li class="pen"></li>
+            <li class="line"></li>
+            <li class="circle"></li>
+            <li class="rect"></li>
+        </ul> -->
+        <!-- <p>笔大小</p>
+        <span class="circle-box"><i id="thickness"></i></span> <input type="range" id="range1" min="1" max="10" value="1"> -->
+        <p>Pen/Geometry color</p>
         <ul class="pen-color clearfix">
             <li class="color-item active" style="background-color: black;"></li>
             <li class="color-item" style="background-color: #FF3333;"></li>
@@ -59,9 +147,41 @@
             <li class="color-item" style="background-color: #FFFF33;"></li>
             <li class="color-item" style="background-color: #33CC66;"></li>
         </ul>
-        <p>不透明度</p>
-        <i class="showOpacity"></i> <input type="range" id="range2" min="1" max="10" value="1">
+        <!-- <p>不透明度</p>
+        <i class="showOpacity"></i> <input type="range" id="range2" min="1" max="10" value="1"> -->
     </div>
+
+    <div class="shapes" id="shapes">
+        <div class="container">
+            <!-- <button class="save"  id="save" title="保存"></button> -->
+            <button class="circle" id="circle" title="circle"></button>
+            <button class="square" id="square" title="square"></button>
+            <!-- <button class="eraser" id="eraser" title="eraser"></button> -->
+            <!-- <button class="clear" id="clear" title="清屏"></button>
+            <button class="undo"  id="undo" title="撤销"></button>
+            <button class="redo"  id="redo" title="再做"></button> -->
+        </div>
+    </div>
+
+
+    <div class="operat" id="operat">
+        <div class="container">
+            <!-- <button class="save"  id="save" title="保存"></button> -->
+            <button class="prev-page" id="prev-page" title="Prev"></button>
+            <button class="big" id="big" title="Zoom In"></button>
+            <button class="small" id="small" title="Zoom Out"></button>
+            <button class="next-page" id="next-page" title="Next"></button>
+            <button class="repo" id="repo" title="PPT repo"></button>
+            <button class="eye" id="eye" title="Anti-Colorblind"></button>
+            <button class="switch" id="switch" title="Power"></button>
+            <!-- <button class="eraser" id="eraser" title="eraser"></button> -->
+            <!-- <button class="clear" id="clear" title="清屏"></button>
+            <button class="undo"  id="undo" title="撤销"></button>
+            <button class="redo"  id="redo" title="再做"></button> -->
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js"></script>
     <script src="./js/main.js"></script>
 </body>
 </html>
